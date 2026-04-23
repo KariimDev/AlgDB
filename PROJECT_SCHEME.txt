@@ -1,0 +1,91 @@
+AlgDB - Project File Scheme & Role Assignment
+==============================================
+Academic Year : 2025/2026
+Project       : History of Algeria Database using Dynamic Data Structures
+School        : NSCS - National School of Cybersecurity
+Level         : 1st Year
+Deadline      : May 14th 2026
+
+TEAM
+----
+Person 1 : Linked Lists, Queues, BST, GUI, project structure
+Person 2 : Stacks, Recursion
+
+================================================================
+FILE STRUCTURE
+================================================================
+
+AlgDB/
+|
+|-- main.c                        [Person 1]
+|   Entry point and main menu
+|
+|-- Makefile                      [Person 1]
+|   Build configuration
+|
+|-- data/
+|   |-- algeria_history.txt       [Both]
+|       Sample data file containing personalities (= separator),
+|       events (: separator), dates in {} format
+|
+|-- include/
+|   |-- types.h                   [Person 1]
+|   |   All shared type definitions:
+|   |     - date struct
+|   |     - TList  (personalities linked list node)
+|   |     - TEvent (events linked list node)
+|   |     - TQueue (queue wrapper)
+|   |     - TStack (stack node)
+|   |     - TTree  (BST node)
+|   |
+|   |-- linkedlist.h              [Person 1]
+|   |   Prototypes for all linked list and queue functions
+|   |
+|   |-- stack.h                   [Person 2]
+|   |   Prototypes for all stack functions
+|   |
+|   |-- tree.h                    [Person 1]
+|   |   Prototypes for all BST functions
+|   |
+|   |-- recursion.h               [Person 2]
+|       Prototypes for all recursive functions
+|
+|-- src/
+|   |-- linkedlist.c              [Person 1]
+|   |   Implementation of all linked list and queue modules
+|   |   (Section 2 of the project brief)
+|   |
+|   |-- stack.c                   [Person 2]
+|   |   Implementation of all stack modules
+|   |   (Section 3 of the project brief)
+|   |
+|   |-- tree.c                    [Person 1]
+|   |   Implementation of all BST modules
+|   |   (Section 4 of the project brief)
+|   |
+|   |-- recursion.c               [Person 2]
+|   |   Implementation of all recursive modules
+|   |   (Section 5 of the project brief)
+|   |
+|   |-- gui.c                     [Person 1]
+|       Graphical user interface implementation
+|       (Section 6 of the project brief)
+|
+|-- report/
+    |-- AlgDB_report.pdf          [Both]
+        Final project report (PDF only, typed, structured)
+
+================================================================
+DEPENDENCY NOTES
+================================================================
+
+- types.h is included by ALL files, never modify it without
+  informing your teammate
+- Person 2 includes types.h, stack.h and recursion.h only
+- Person 1 includes types.h, linkedlist.h, tree.h
+- Both must agree on any change to types.h or data file format
+- Data file format:
+    Personality : Name {DoB-DoD}= definition
+    Event       : Name {date}: description
+    Date format : dd/mm/yyyy for full dates, yyyy for year only
+                  day and month set to 0 when unknown
