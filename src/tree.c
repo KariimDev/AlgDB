@@ -3,6 +3,7 @@
 #include <string.h>
 #include "../include/tree.h"
 #include "../include/stack.h"
+#include "../include/linkedlist.h"
 
 TTree* insertTree(TTree *root, TTree *newNode) {
     if (root == NULL) return newNode;
@@ -109,11 +110,19 @@ void _getInfoNameTree() {
     TTree *result;
     char nameToSearch[100];
 
-    file = fopen("data/algeria_history.txt", "r");
-    if (file == NULL) return;
+    char filePath[100];
     
-    root = fillTree(file);
-    fclose(file);
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
+    if (file != NULL) {
+        root = fillTree(file);
+        fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
+    }
 
     printf("Enter name to search: ");
     scanf(" %99[^\n]", nameToSearch);
@@ -150,10 +159,18 @@ void _addNameBST() {
     char dob[40];
     char dod[40];
 
-    file = fopen("data/algeria_history.txt", "r");
+    char filePath[100];
+
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
     if (file != NULL) {
         root = fillTree(file);
         fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
     }
 
     printf("Enter name: ");
@@ -217,10 +234,18 @@ void _deleteNameBST() {
     TTree *root = NULL;
     char nameToSearch[100];
 
-    file = fopen("data/algeria_history.txt", "r");
+    char filePath[100];
+
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
     if (file != NULL) {
         root = fillTree(file);
         fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
     }
 
     printf("Enter name to delete: ");
@@ -229,4 +254,149 @@ void _deleteNameBST() {
     root = deleteNameBST(root, nameToSearch);
 
     printf("Deleted %s from the BST if it existed.\n", nameToSearch);
+}
+
+
+TTree* updateNameBST(TTree *tr, char *name, char *s, char *DoB, char *DoD) {
+    TTree *newNode;
+
+    tr = deleteNameBST(tr, name);
+
+    newNode = (TTree *)malloc(sizeof(TTree));
+    strcpy(newNode->name, name);
+    strcpy(newNode->definition, s);
+    strcpy(newNode->DoB, DoB);
+    strcpy(newNode->DoD, DoD);
+    newNode->left = NULL;
+    newNode->right = NULL;
+
+    return insertTree(tr, newNode);
+}
+
+void _updateNameBST() {
+    FILE *file;
+    TTree *root = NULL;
+    char name[100];
+    char definition[500];
+    char dob[40];
+    char dod[40];
+
+    char filePath[100];
+
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
+    if (file != NULL) {
+        root = fillTree(file);
+        fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    printf("Enter name of personality to update: ");
+    scanf(" %99[^\n]", name);
+    printf("Enter new definition: ");
+    scanf(" %499[^\n]", definition);
+    printf("Enter new Date of Birth: ");
+    scanf(" %39[^\n]", dob);
+    printf("Enter new Date of Death: ");
+    scanf(" %39[^\n]", dod);
+
+    root = updateNameBST(root, name, definition, dob, dod);
+
+    if (root != NULL) {
+        printf("Updated %s using delete-and-insert method.\n", name);
+    }
+}
+
+TTree* traversalBSTinOrder(TTree *tr) {
+    if (tr != NULL) {
+        traversalBSTinOrder(tr->left);
+        printf("-> %s\n", tr->name);
+        traversalBSTinOrder(tr->right);
+    }
+    return tr;
+}
+
+void _traversalBSTinOrder() {
+    char filePath[100];
+    FILE *file;
+    TTree *root = NULL;
+
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
+    if (file != NULL) {
+        root = fillTree(file);
+        fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    printf("\n--- In-Order Traversal ---\n");
+    traversalBSTinOrder(root);
+}
+
+TTree* traversalBSTpreOrder(TTree *tr) {
+    if (tr != NULL) {
+        printf("-> %s\n", tr->name);
+        traversalBSTpreOrder(tr->left);
+        traversalBSTpreOrder(tr->right);
+    }
+    return tr;
+}
+
+void _traversalBSTpreOrder() {
+    char filePath[100];
+    FILE *file;
+    TTree *root = NULL;
+
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
+    if (file != NULL) {
+        root = fillTree(file);
+        fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    printf("\n--- Pre-Order Traversal ---\n");
+    traversalBSTpreOrder(root);
+}
+
+TTree* traversalBSTpostOrder(TTree *tr) {
+    if (tr != NULL) {
+        traversalBSTpostOrder(tr->left);
+        traversalBSTpostOrder(tr->right);
+        printf("-> %s\n", tr->name);
+    }
+    return tr;
+}
+
+void _traversalBSTpostOrder() {
+    char filePath[100];
+    FILE *file;
+    TTree *root = NULL;
+
+    printf("Enter file path: ");
+    scanf("%99s", filePath);
+
+    file = fopen(filePath, "r");
+    if (file != NULL) {
+        root = fillTree(file);
+        fclose(file);
+    } else {
+        printf("Error opening file.\n");
+        return;
+    }
+
+    printf("\n--- Post-Order Traversal ---\n");
+    traversalBSTpostOrder(root);
 }

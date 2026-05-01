@@ -4,13 +4,14 @@
 #include "types.h"
 #include <stdio.h>
 #include <stdbool.h>
+#include "linkedlist.h"
 
 
 
 TTree* toTree(TStack *stk);
 TTree* fillTree(FILE *f);
 TTree* getInfoNameTree(TTree *tr, char *name);
-TStack* addNameBST(TTree *tr, char *name, char *DoB, char *DoD);
+TTree* addNameBST(TTree *tr, char *name, char *DoB, char *DoD);
 TTree* deleteNameBST(TTree *tr, char *name);
 TTree* updateNameBST(TTree *tr, char *name, char *s, char *DoB, char *DoD);
 TTree* traversalBSTinOrder(TTree *tr);
