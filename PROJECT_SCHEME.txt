@@ -39,7 +39,7 @@ AlgDB/
 |   |     - TTree  (BST node)
 |   |
 |   |-- linkedlist.h              [Person 1]
-|   |   Prototypes for all linked list and queue functions
+|   |   Prototypes for all linkepd list and queue functions
 |   |
 |   |-- stack.h                   [Person 2]
 |   |   Prototypes for all stack functions
