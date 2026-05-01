@@ -23,25 +23,22 @@ TTree* insertTree(TTree *root, TTree *newNode) {
 TTree* toTree(TStack *stk) {
     TTree *root;
     TTree *newNode;
-    TStack *popped;
+    TStack temp;
 
     root = NULL;
 
     while (stk != NULL) {
-        popped = pop(&stk);
+        stk = pop(stk, &temp);
         
-        if (popped != NULL) {
-            newNode = (TTree *)malloc(sizeof(TTree));
-            strcpy(newNode->name, popped->name);
-            strcpy(newNode->definition, popped->definition);
-            strcpy(newNode->DoB, popped->DoB);
-            strcpy(newNode->DoD, popped->DoD);
-            newNode->left = NULL;
-            newNode->right = NULL;
-            
-            root = insertTree(root, newNode);
-            free(popped);
-        }
+        newNode = (TTree *)malloc(sizeof(TTree));
+        strcpy(newNode->name, temp.name);
+        strcpy(newNode->definition, temp.definition);
+        strcpy(newNode->DoB, temp.DoB);
+        strcpy(newNode->DoD, temp.DoD);
+        newNode->left = NULL;
+        newNode->right = NULL;
+        
+        root = insertTree(root, newNode);
     }
 
     return root;

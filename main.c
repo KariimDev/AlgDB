@@ -5,6 +5,8 @@
 
 #include "include/linkedlist.h"
 #include "include/tree.h"
+#include "include/stack.h"
+#include "include/recursion.h"
 
 #define START_R 60
 #define START_G 160
@@ -77,6 +79,9 @@ void pauseConsole() {
 }
 
 void menuLinkedList();
+void menuTree();
+void menuStack();
+void menuRecursion();
 void showAbout();
 
 int main() {
@@ -86,7 +91,10 @@ int main() {
         printBitmapLogo();
         printf("------------- AlgDB Main Menu -------------\n");
         printf(C_NUM "1." C_RST " Linked Lists & Queues\n");
-        printf(C_NUM "2." C_RST " About\n");
+        printf(C_NUM "2." C_RST " Stacks\n");
+        printf(C_NUM "3." C_RST " Binary Search Trees\n");
+        printf(C_NUM "4." C_RST " Recursion\n");
+        printf(C_NUM "5." C_RST " About\n");
         printf(C_NUM "0." C_RST " Exit\n");
         printf("-------------------------------------------\n");
         printf("Enter your choice: ");
@@ -97,7 +105,10 @@ int main() {
 
         switch (choice) {
             case 1: menuLinkedList(); break;
-            case 2: showAbout(); break;
+            case 2: menuStack(); break;
+            case 3: menuTree(); break;
+            case 4: menuRecursion(); break;
+            case 5: showAbout(); break;
             case 0:
                 printf("Exiting AlgDB. Goodbye.\n");
                 exit(0);
@@ -173,4 +184,125 @@ void showAbout() {
     printf("School: NSCS, Pole scientifique, Sidi Abdallah\n");
     printf("================================================\n");
     pauseConsole();
+}
+
+void menuTree() {
+    int choice;
+    do {
+        clearScreen();
+        printf("\033[38;2;%d;%d;%dm >> Binary Search Trees\033[0m\n", START_R, START_G, START_B);
+        printf("-------------------------------------\n");
+        printf(" " C_NUM " 1." C_RST " Fill Tree               " C_NUM " 2." C_RST " Get Personality Info\n");
+        printf(" " C_NUM " 3." C_RST " Add Personality         " C_NUM " 4." C_RST " Delete Personality\n");
+        printf(" " C_NUM " 5." C_RST " Update Personality      " C_NUM " 6." C_RST " Traversal In-Order\n");
+        printf(" " C_NUM " 7." C_RST " Traversal Pre-Order     " C_NUM " 8." C_RST " Traversal Post-Order\n");
+        printf(" " C_NUM " 9." C_RST " Height & Size           " C_NUM "10." C_RST " Lowest Common Ancestor\n");
+        printf(" " C_NUM "11." C_RST " Count Nodes in Range    " C_NUM "12." C_RST " In-Order Successor\n");
+        printf(" " C_NUM "13." C_RST " Mirror Tree             " C_NUM "14." C_RST " Check if Balanced\n");
+        printf(" " C_NUM "15." C_RST " Merge Trees             " C_NUM " 0." C_RST " Back\n");
+        printf("-------------------------------------\n");
+        printf("Choice: ");
+        while (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number: ");
+            while (getchar() != '\n');
+        }
+
+        switch (choice) {
+            case  1: _fillTree();              break;
+            case  2: _getInfoNameTree();       break;
+            case  3: _addNameBST();            break;
+            case  4: _deleteNameBST();         break;
+            case  5: _updateNameBST();         break;
+            case  6: _traversalBSTinOrder();   break;
+            case  7: _traversalBSTpreOrder();  break;
+            case  8: _traversalBSTpostOrder(); break;
+            case  9: _heightSizeBST();         break;
+            case 10: _lowestCommonAncestor();  break;
+            case 11: _countNodesRange();       break;
+            case 12: _inOrderSuccessor();      break;
+            case 13: _BSTMirror();             break;
+            case 14: _isBalancedBST();         break;
+            case 15: _BTSMerge();              break;
+            case  0: return;
+            default: printf("Invalid choice.\n");
+        }
+        if (choice != 0) pauseConsole();
+    } while (choice != 0);
+}
+
+void menuStack() {
+    int choice;
+    do {
+        clearScreen();
+        printf("\033[38;2;%d;%d;%dm >> Stacks\033[0m\n", START_R, START_G, START_B);
+        printf("-------------------------------------\n");
+        printf(" " C_NUM " 1." C_RST " Convert List to Stack   " C_NUM " 2." C_RST " Get Personality Info\n");
+        printf(" " C_NUM " 3." C_RST " Sort Stack (Alpha)      " C_NUM " 4." C_RST " Delete from Stack\n");
+        printf(" " C_NUM " 5." C_RST " Update in Stack         " C_NUM " 6." C_RST " Stack to Queue\n");
+        printf(" " C_NUM " 7." C_RST " Stack to List           " C_NUM " 8." C_RST " Add to Stack\n");
+        printf(" " C_NUM " 9." C_RST " Sort by Definition Len  " C_NUM "10." C_RST " Sort Short/Long\n");
+        printf(" " C_NUM "11." C_RST " Get Smallest Definition " C_NUM "12." C_RST " Continuous Events\n");
+        printf(" " C_NUM "13." C_RST " Was Personality Killed? " C_NUM "14." C_RST " Reverse Stack\n");
+        printf(" " C_NUM " 0." C_RST " Back\n");
+        printf("-------------------------------------\n");
+        printf("Choice: ");
+        while (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number: ");
+            while (getchar() != '\n');
+        }
+
+        switch (choice) {
+            case  1: _toStack();              break;
+            case  2: _getInfoPersonality();   break;
+            case  3: _sortNameStack();        break;
+            case  4: _deleteName();           break;
+            case  5: _updateStack();          break;
+            case  6: _stackToQueue();         break;
+            case  7: _stackToList();          break;
+            case  8: _addNameStack();         break;
+            case  9: _definitionStack();      break;
+            case 10: _pronunciationStack();   break;
+            case 11: _getSmallest();          break;
+            case 12: _continuousSearch();     break;
+            case 13: _isPersonalityKilled();  break;
+            case 14: _recRevStack();          break;
+            case  0: return;
+            default: printf("Invalid choice.\n");
+        }
+        if (choice != 0) pauseConsole();
+    } while (choice != 0);
+}
+
+void menuRecursion() {
+    int choice;
+    do {
+        clearScreen();
+        printf("\033[38;2;%d;%d;%dm >> Recursion\033[0m\n", START_R, START_G, START_B);
+        printf("-------------------------------------\n");
+        printf(" " C_NUM "1." C_RST " Count Occurrences       " C_NUM "2." C_RST " Remove Occurrences\n");
+        printf(" " C_NUM "3." C_RST " Replace Occurrences     " C_NUM "4." C_RST " Name Permutations\n");
+        printf(" " C_NUM "5." C_RST " Subsequences of Name    " C_NUM "6." C_RST " Overlapping Events\n");
+        printf(" " C_NUM "7." C_RST " Distinct Subsequences   " C_NUM "8." C_RST " Is Palindrome?\n");
+        printf(" " C_NUM "0." C_RST " Back\n");
+        printf("-------------------------------------\n");
+        printf("Choice: ");
+        while (scanf("%d", &choice) != 1) {
+            printf("Invalid input. Please enter a number: ");
+            while (getchar() != '\n');
+        }
+
+        switch (choice) {
+            case 1: _countOccurence();    break;
+            case 2: _removeOccurence();   break;
+            case 3: _replaceOccurence();  break;
+            case 4: _namePermutation();   break;
+            case 5: _subseqName();        break;
+            case 6: _longestSubyear();    break;
+            case 7: _distinctSubseqWord(); break;
+            case 8: _isPalindromeWord();  break;
+            case 0: return;
+            default: printf("Invalid choice.\n");
+        }
+        if (choice != 0) pauseConsole();
+    } while (choice != 0);
 }

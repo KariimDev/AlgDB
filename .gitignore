@@ -1,1 +1,4 @@
-forai.md
+*.exe
+*.o
+*.py
+test_data.txt

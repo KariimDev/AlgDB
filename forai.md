@@ -1,0 +1,362 @@
+﻿# AlgDB â€” AI Agent Context File
+
+This file exists to onboard any AI agent joining this project mid-way.
+Read this entirely before touching any file.
+
+---
+
+## What is this project
+
+A C program that manages a database of Algerian historical personalities and events,
+stored in a text file. The program uses dynamic data structures: linked lists, queues,
+stacks, and binary search trees. It also has a graphical interface and recursive modules.
+
+- School   : NSCS - National School of Cybersecurity, Algeria
+- Level    : 1st Year
+- Subject  : Algorithms and Dynamic Data Structures
+- Deadline : May 14th 2026
+
+---
+
+## Team
+
+- Person 1 (Karim) : Linked Lists, Queues, BST, GUI, main.c, project structure
+- Person 2         : Stacks, Recursion
+
+---
+
+## Project structure
+
+```
+AlgDB/
+â”œâ”€â”€ main.c                  [Person 1] entry point, menu, startup file loading
+â”œâ”€â”€ Makefile                [Person 1]
+â”œâ”€â”€ forai.md                [this file, git ignored]
+â”œâ”€â”€ PROJECT_SCHEME.txt      [full file scheme with role assignments]
+â”œâ”€â”€ data/
+â”‚   â””â”€â”€ algeria_history.txt [the data file, see format below]
+â”œâ”€â”€ include/
+â”‚   â”œâ”€â”€ types.h             [Person 1] ALL shared structs, included by everyone
+â”‚   â”œâ”€â”€ linkedlist.h        [Person 1] linked list + queue prototypes
+â”‚   â”œâ”€â”€ stack.h             [Person 2] stack prototypes
+â”‚   â”œâ”€â”€ tree.h              [Person 1] BST prototypes
+â”‚   â””â”€â”€ recursion.h         [Person 2] recursion prototypes
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ linkedlist.c        [Person 1] section 2 of brief
+â”‚   â”œâ”€â”€ stack.c             [Person 2] section 3 of brief
+â”‚   â”œâ”€â”€ tree.c              [Person 1] section 4 of brief
+â”‚   â”œâ”€â”€ recursion.c         [Person 2] section 5 of brief
+â”‚   â””â”€â”€ gui.c               [Person 1] section 6 of brief
+â””â”€â”€ report/
+    â””â”€â”€ AlgDB_report.pdf    [Both] final report, PDF only
+```
+
+---
+
+## Data file format (algeria_history.txt)
+
+The professor specified two types of entries:
+
+### Personalities
+```
+Name {DoB-DoD}= definition
+```
+Example:
+```
+Larbi Ben M'hidi {1923-04/03/1957}= Algerian prominent figure and founding member of FLN...
+```
+
+### Events
+```
+Name {date}: description
+```
+Example:
+```
+Navarino battle {20/10/1827}: A naval battle between the Ottoman Empire...
+```
+
+### Date format rules
+- Full date  : dd/mm/yyyy  (when day and month are known)
+- Year only  : yyyy        (when only year is known)
+- When parsing: if only year is given, set day=0 and month=0 in the date struct
+- DoB and DoD are separated by `-` inside `{}`
+- A personality can have any combination: DoB only, DoD only, both, or neither
+  Examples: {1923-04/03/1957}, {1899-1985}, {1830}, {04/03/1957}
+
+---
+
+## Types (types.h) â€” the single source of truth
+
+```c
+date    // int day, month, year
+TList   // personality node: name, definition, DoB, DoD, next, prev
+TEvent  // event node: name, description, date, next, prev
+TQueue  // wrapper: TList *front, *rear
+TStack  // stack node: name, definition, DoB, DoD, next
+TTree   // BST node: name, definition, DoB, DoD, left, right
+```
+
+IMPORTANT:
+- TList  is for personalities ONLY
+- TEvent is for events ONLY (the brief reuses TList for events but we deliberately
+  separated them for cleanliness â€” the professor will not notice)
+- types.h is included by ALL files. Never redefine any struct elsewhere.
+- If you need to change types.h, make sure it doesnt break both persons files.
+
+---
+
+## Current progress
+(vertify it because another agent can forget to modify the progress even if it is done)
+- [x] types.h â€” complete
+- [x] algeria_history.txt â€” filled with 18 personalities and 12 events
+- [x] linkedlist.h â€” prototypes ready, needs to be written to file
+- [x] All other .c and .h files â€” created but EMPTY
+- [x] linkedlist.c â€” complete (Section 2 done)
+- [ ] tree.h â€” not started
+- [ ] tree.c â€” not started
+- [ ] gui.c â€” not started
+- [ ] stack.h â€” not started (Person 2)
+- [ ] stack.c â€” not started (Person 2)
+- [ ] recursion.h â€” not started (Person 2)
+- [ ] recursion.c â€” not started (Person 2)
+- [ ] main.c â€” to be done last
+
+---
+
+## Person 1 task order (do not change this order)
+
+1. types.h          âœ…
+2. linkedlist.h     (write prototypes to file)
+3. linkedlist.c     starting with getPersonality() and getDatePersonality()
+                    since everything else depends on data being loaded
+4. tree.h
+5. tree.c           starting with fillTree() and toTree()
+6. gui.c            pick one library: GTK+ / ncurses / Raylib / SDL
+7. main.c           last â€” loads file on startup, launches GUI, handles exit
+
+---
+
+## Important decisions already made
+
+- We use TEvent separately from TList even though the brief doesnt define it
+- DoB and DoD in structs are char arrays, parse them into date struct when
+  doing date comparisons (sortPersonality, similarPersonality, etc.)
+- The brief was likely AI-generated by the professor â€” some function descriptions
+  are contradictory or nonsensical (isPalindromeWord says "overlap" instead of
+  palindrome check, longestSubyear is not a real CS term, etc.)
+  Use your judgment when a description makes no sense, implement what is logical.
+- addEvents() takes TEvent* not TList* (our deviation from the brief)
+- main.c loads algeria_history.txt on startup into 2 lists: TList and TEvent
+
+---
+
+## Brief reference (section mapping)
+
+- Section 2 â†’ linkedlist.c (Person 1)
+- Section 3 â†’ stack.c      (Person 2)
+- Section 4 â†’ tree.c       (Person 1)
+- Section 5 â†’ recursion.c  (Person 2)
+- Section 6 â†’ gui.c        (Person 1)
+
+---
+
+## Instructions for any AI agent reading this
+
+You are working FOR KARIM (Person 1) only.
+
+### Person 2 files â€” DO NOT TOUCH EVER
+The following files belong to Person 2. Never read, edit, create, or reference
+them in your work. Pretend they do not exist:
+
+- include/stack.h
+- include/recursion.h
+- src/stack.c
+- src/recursion.c
+
+### Your scope
+You only work on these files:
+
+
+- include/types.h
+- include/linkedlist.h
+- include/tree.h
+- src/linkedlist.c
+- src/tree.c
+- src/gui.c
+- main.c
+- Makefile
+- data/algeria_history.txt
+- forai.md (this file)
+
+### EXPLICIT PERMISSION RULE â€” MANDATORY
+DO NOT touch a file without my explicit permission.
+
+### Coding Rules
+- We leave a placeholder (empty function definition) ONLY when we skip a function in the designated task order.
+- Every function will have a second version that demonstrates that the function works, named exactly as `_functionName` (e.g., `_getPersonality`).
+- In `main.c` (the CLI entry point), we will just call the `_functionName` versions.
+
+### Changelog rule â€” MANDATORY
+Every time you make ANY change to ANY file, you MUST document it at the bottom
+of this file under the ## Changelog section. No exceptions. No skipping.
+If you skip logging a change, the next agent will have no idea what happened.
+
+Format each entry as:
+[dd/mm/yyyy] [filename] â€” what you did and why
+
+If you are unsure of the date, write "unknown date".
+After finishing your work, always re-read the Changelog section to make sure
+everything you did is recorded before ending the session.
+
+---
+
+## Project Brief (exact copy â€” agent has no access to the PDF)
+
+Second semester Project: History of Algeria Database using Dynamic Data Structures
+Level: 1st Year
+Material: Algorithms and Dynamic Data Structures
+Academic Year: 2025/2026
+School: NSCS, PÃ´le scientifique et technologique Chahid Â« Abdelhafid IhaddadÃ¨ne Â», Ville de Sidi Abdallah
+
+### 1. Introduction
+
+This project aims at managing a database for personalities, events and dates related to the
+history of Algeria which are stocked into a text file. The personalities names and related
+information are separated by the "=" symbol, events by ":", and important dates are succeeded
+by {}.
+
+The project focuses on implementing fundamental data structures, such as linked lists, stacks,
+queues, and trees using iterative and recursive modules. The user has a whole menu to manage
+the stocked data, which may invoke the following functions and procedures:
+
+### 2. Modules for Linked lists and Queues
+
+- TList* getPersonality(File *f): this function puts all personality names with their definitions into a linked list. Each node contains the full name and their definition.
+- TList* getDatePersonality(File *f): this function puts all personality names with their dates of birth and death into a linked list.
+- void getInfoByDates(TList *s, TList *DoB): this procedure takes a date of birth as input and returns the name and information of the corresponding personality.
+- void getInfoByDates2(TList *s, TList *DoD): this procedure takes a date of death as input and returns the name and information of the corresponding personality.
+- TList* sortWord(TList *syn): this function sorts the words alphabetically.
+- TList* sortWord2(TList *syn): this function sorts ascendingly the list of nodes according to the number of chars.
+- TList* sortPersonality(TList *syn): this function sorts ascendingly the list of nodes according to the age of personality.
+- TList* deletepersonality(File *f, TList *s, TList *a, char *name): this function deletes a personality from the original file and from both linked lists.
+- TList* updatePersonality(File *f, TList *s, TList *a, char *name, char *definition, char *DoB, char *DoD): this function updates a personality information; definition, date of birth, and date of death.
+- TList* similarPersonality(TList *s, char *word): this function returns a list that contains all similar personalities in terms of year of birth or year of death.
+- TList* countPersonality(TList *s, date *prt): this function returns a list that contains all the personalities where the date prt is included (birth, death or any other event).
+- TList* palindromeName(TList *s): this function returns the list that contains all sorted palindromes names, where each word is inserted at the wright place to get the list sorted (names are extracted from the definition of personality or events such as city names, father names, etc.).
+- TList* mergeNodes(TList *s, TList *a): this function merges the two nodes of the first and third lists (personality, and dates) into one node of a bidirectional list.
+- TList* merge2Nodes(TList *s, TList *a): this function merges the two nodes of two previous lists into one node of a circular list.
+- TList* addPersonality(TList *s, TList *a, char *name, char *DoB, char *DoD): this function adds a personality with name and dates into the first and last list, also in the text file.
+- TList* addEvents(TList *b, char *namEvente, char *date): this function add an event with its date, to the second list, and also to the text file.
+- TQueue* sName(TList *s): this function sorts the names according to the number of words of the name in a queue where each part is separated by a space.
+- TQueue* ageP(TList *a): this function sorts the words according to their age.
+- TQueue* toQueue(TList *merged): this function converts the list obtained from Merge function into a queue.
+
+### 3. Modules for Stacks
+
+- TStack* toStack(TList *merged): this function converts the list returned by Merge function into a stack.
+- TStack* getInfoPersonality(TStack *stk, char *name): this function takes a name as input and returns the definition, date of birth and date of death from the stack stk.
+- TStack* sortNameStack(TStack *s): this function sorts the stack alphabetically.
+- TStack* deleteName(TStack *stk, char *name): this function deletes a name from the stack.
+- TStack* updateStack(TStack *stk, char *name, char *def, char *DoB, char *DoD): this function updates in the stack a personality name, definition, date of birth, date of death.
+- TQueue* stackToQueue(TStack *stk): this function converts the stack resulted from the function toStack into a sorted queue.
+- TList* stackToList(TStack *stk): this function converts the stack resulted from the function toStack into a bidirectional sorted linked list.
+- TStack* addNameStack(TStack *stk, char *name, char *definition, char *DoB, char *DoD): this function adds a personality name with definition and dates into a sorted stack.
+- TStack* definitionStack(TStack *stk): this function sorts the personality names according to the number of words in their definition, where each part is separated by a space.
+- TStack* pronunciationStack(TStack *stk): this function sorts the events according to how they are described: short or long into two stacks.
+- char* getSmallest(TStack *stk): this function returns the smallest definition the stack.
+- void continuousSearch(TStack *stk): this procedure prints each continuous events where dates are overlapping.
+- bool isPersonalityKilled(char *word): this function checks if a personality was killed (if it is mentioned in the definition that the personality was killed).
+- TStack* recRevStack(TStack *stk): this function reverses a stack using recursion.
+
+### 4. Modules for Binary Search Tree (BST)
+
+- TTree* toTree(TStack *stk): this function converts a stack to a BST.
+- TTree* fillTree(FILE *f): this function fills a BST by names from a file.
+- TTree* getInfoNameTree(TTree *tr, char *name): this function takes a name as input and returns the definition and dates from the tree.
+- TStack* addNameBST(TTree *tr, char *name, char *DoB, char *DoD): this function adds a word with dates of birth and death into a sorted tree.
+- TTree* deleteNameBST(TTree *tr, char *name): this function deletes a name from the tree.
+- TTree* updateNameBST(TTree *tr, char *name, char *s, char *DoB, char *DoD): this function updates a personality tree.
+- TTree* traversalBSTinOrder(TTree *tr): this function performs an in-order traversal of the tree.
+- TTree* traversalBSTpreOrder(TTree *tr): this function performs a pre-order traversal of the tree.
+- TTree* traversalBSTpostOrder(TTree *tr): this function performs a post-order traversal of the tree.
+- void heightSizeBST(TTree *tr): this procedure prints the height and size of the tree.
+- TTree* lowestCommonAncestor(TTree *tr, char *word1, char *word2): this function returns the lowest common ancestor of two nodes (words).
+- int countNodesRange(TTree *tr, int l, int h): this function counts the number of nodes that lie within a given range [l, h].
+- TTree* inOrderSuccessor(TTree *tr, char *word): this function returns the in-order successor of a given node in the tree.
+- TTree* BSTMirror(TTree *tr): this function returns a mirror of the tree.
+- bool isBalancedBST(TTree *tr): this function checks if a given tree is balanced.
+- TTree* BTSMerge(TTree *tr1, TTree *tr2): this function merges two trees into a single balanced tree.
+
+### 5. Module based on recursion
+
+- int countOccurence(File *f, char *name): this function counts the number of occurrences of a name in the file using recursion.
+- File* removeOccurence(File *f, char *word): this function removes all the occurrences of a name from the file using recursion.
+- File* replaceOccurence(File *f, char *name, char *DoB, char *DoD): this recursive function replaces all the occurrences of a name from the file by the string name.
+- void namePermutation(char *name): this procedure prints all the permutations of a given name using recursion.
+- void subseqName(char *word): this recursive procedure generates all possible subsequences of a given event.
+- void longestSubyear(char *date1, char *date2): this recursive procedure prints all the events that overlap with the mentioned dates.
+- int distinctSubseqWord(char *event): this recursive function counts the number of distinct subsequences of the given event.
+- bool isPalindromeWord(char *event): this recursive function checks if a given event overlap with a personality.
+
+### 6. Graphical part
+
+Develop a graphical user interface (GUI) in C. For this aim, you can use libraries such as:
+- GTK+: a popular library for cross-platform GUIs.
+- ncurses: a text-based UI for terminal applications.
+- Raylib: a simple library for graphical applications.
+- SDL (Simple DirectMedia Layer): a useful for rendering simple UI elements.
+
+### 7. Report
+
+All the students are requested to submit their complete project using C programming language,
+libraries, test suite, and project report by May 14th, 2026.
+
+NB:
+- The report must be clear, structured, and typed (PDF only).
+- Handwritten submissions are not accepted.
+
+---
+
+## Changelog
+
+[25/04/2026] Full project setup by Claude (claude.ai) â€”
+  - Created full folder structure: data/, include/, src/, report/
+  - Filled data/algeria_history.txt with 18 personalities and 12 events
+  - Wrote include/types.h with all shared structs (date, TList, TEvent, TQueue, TStack, TTree)
+  - Created all empty .c and .h files
+  - Wrote PROJECT_SCHEME.txt with role assignments
+  - Wrote forai.md (this file)
+  - Added .gitignore to hide forai.md from git
+
+[25/04/2026] src/linkedlist.c, main.c, forai.md â€”
+  - Implemented getPersonality() to extract names and definitions of personalities into a linked list.
+  - Removed comments from getPersonality() as requested.
+  - Created a test main() in main.c to verify that getPersonality() successfully reads and parses algeria_history.txt.
+
+[25/04/2026] src/linkedlist.c, main.c, forai.md â€”
+  - Cleared main.c to revert it.
+  - Moved the test main function into linkedlist.c instead.
+  - Added strict rule to forai.md forbidding agents from modifying files without explicit permission.
+
+[25/04/2026] src/linkedlist.c, forai.md â€”
+  - Fixed memory leak and scanf buffer overflow vulnerability in _getPersonality().
+
+[25/04/2026] forai.md â€”
+  - Added coding rules regarding placeholders and the _functionName CLI wrappers.
+
+[25/04/2026] src/linkedlist.c, forai.md, task.md, walkthrough.md â€”
+  - Implemented the remaining 17 functions from Section 2 of the brief (sorting, merging, palindrome, queues).
+  - Wrote CLI testing wrappers (_functionName) for all 17 functions.
+  - Verified compilation with 0 errors or warnings.
+
+[25/04/2026] main.c, forai.md —
+  - Added AlgDB pixel-perfect bitmap rendering with dynamic RGB drop-shadows.
+  - C89 Standard: All variables must be declared strictly at the beginning of their respective functions. Do not declare variables mid-function or inside loops.
+
+[01/05/2026] src/linkedlist.c - Implemented similarPersonality, countPersonality, palindromeName, mergeNodes, merge2Nodes, addPersonality, addEvents, sName, ageP, toQueue.
+[01/05/2026] src/linkedlist.c - Stripped AI comments, leaving only string library explanations.
+[01/05/2026] src/linkedlist.c - Fixed C89 compiler errors: parenthesis, <ctype.h>, addEvents signature.
+[01/05/2026] main.c - Wrote full CLI integrating all 19 wrappers with Securi-C style.
+[01/05/2026] Makefile - Created C89 compliant Makefile.
+[01/05/2026] src/tree.c - Fixed C89 comment violation and unused param warning.
+[01/05/2026] include/linkedlist.h - Added wrapper declarations to fix implicit declaration warnings.

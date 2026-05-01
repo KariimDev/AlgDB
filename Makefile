@@ -1,7 +1,7 @@
 CC     = gcc
 CFLAGS = -Wall -Wextra -std=c89 -Iinclude
 
-SRC    = src/linkedlist.c src/tree.c main.c
+SRC    = src/linkedlist.c src/tree.c src/stack.c src/recursion.c main.c
 OBJ    = $(SRC:.c=.o)
 TARGET = algdb.exe
 

@@ -24,4 +24,22 @@ TTree* inOrderSuccessor(TTree *tr, char *word);
 TTree* BSTMirror(TTree *tr);
 bool isBalancedBST(TTree *tr);
 TTree* BTSMerge(TTree *tr1, TTree *tr2);
+
+/* Wrapper functions for CLI */
+void _fillTree();
+void _getInfoNameTree();
+void _addNameBST();
+void _deleteNameBST();
+void _updateNameBST();
+void _traversalBSTinOrder();
+void _traversalBSTpreOrder();
+void _traversalBSTpostOrder();
+void _heightSizeBST();
+void _lowestCommonAncestor();
+void _countNodesRange();
+void _inOrderSuccessor();
+void _BSTMirror();
+void _isBalancedBST();
+void _BTSMerge();
+
 #endif
