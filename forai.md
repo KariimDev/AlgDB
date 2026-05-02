@@ -1,4 +1,4 @@
-﻿# AlgDB â€” AI Agent Context File
+# AlgDB - AI Agent Context File
 
 This file exists to onboard any AI agent joining this project mid-way.
 Read this entirely before touching any file.
@@ -29,26 +29,26 @@ stacks, and binary search trees. It also has a graphical interface and recursive
 
 ```
 AlgDB/
-â”œâ”€â”€ main.c                  [Person 1] entry point, menu, startup file loading
-â”œâ”€â”€ Makefile                [Person 1]
-â”œâ”€â”€ forai.md                [this file, git ignored]
-â”œâ”€â”€ PROJECT_SCHEME.txt      [full file scheme with role assignments]
-â”œâ”€â”€ data/
-â”‚   â””â”€â”€ algeria_history.txt [the data file, see format below]
-â”œâ”€â”€ include/
-â”‚   â”œâ”€â”€ types.h             [Person 1] ALL shared structs, included by everyone
-â”‚   â”œâ”€â”€ linkedlist.h        [Person 1] linked list + queue prototypes
-â”‚   â”œâ”€â”€ stack.h             [Person 2] stack prototypes
-â”‚   â”œâ”€â”€ tree.h              [Person 1] BST prototypes
-â”‚   â””â”€â”€ recursion.h         [Person 2] recursion prototypes
-â”œâ”€â”€ src/
-â”‚   â”œâ”€â”€ linkedlist.c        [Person 1] section 2 of brief
-â”‚   â”œâ”€â”€ stack.c             [Person 2] section 3 of brief
-â”‚   â”œâ”€â”€ tree.c              [Person 1] section 4 of brief
-â”‚   â”œâ”€â”€ recursion.c         [Person 2] section 5 of brief
-â”‚   â””â”€â”€ gui.c               [Person 1] section 6 of brief
-â””â”€â”€ report/
-    â””â”€â”€ AlgDB_report.pdf    [Both] final report, PDF only
+|-- main.c                  [Person 1] entry point, menu, startup file loading
+|-- Makefile                [Person 1]
+|-- forai.md                [this file, git ignored]
+|-- PROJECT_SCHEME.txt      [full file scheme with role assignments]
+|-- data/
+|   |-- algeria_history.txt [the data file, see format below]
+|-- include/
+|   |-- types.h             [Person 1] ALL shared structs, included by everyone
+|   |-- linkedlist.h        [Person 1] linked list + queue prototypes
+|   |-- stack.h             [Person 2] stack prototypes
+|   |-- tree.h              [Person 1] BST prototypes
+|   |-- recursion.h         [Person 2] recursion prototypes
+|-- src/
+|   |-- linkedlist.c        [Person 1] section 2 of brief
+|   |-- stack.c             [Person 2] section 3 of brief
+|   |-- tree.c              [Person 1] section 4 of brief
+|   |-- recursion.c         [Person 2] section 5 of brief
+|   |-- gui.c               [Person 1] section 6 of brief
+|-- report/
+    |-- AlgDB_report.pdf    [Both] final report, PDF only
 ```
 
 ---
@@ -85,7 +85,7 @@ Navarino battle {20/10/1827}: A naval battle between the Ottoman Empire...
 
 ---
 
-## Types (types.h) â€” the single source of truth
+## Types (types.h) - the single source of truth
 
 ```c
 date    // int day, month, year
@@ -99,40 +99,43 @@ TTree   // BST node: name, definition, DoB, DoD, left, right
 IMPORTANT:
 - TList  is for personalities ONLY
 - TEvent is for events ONLY (the brief reuses TList for events but we deliberately
-  separated them for cleanliness â€” the professor will not notice)
+  separated them for cleanliness - the professor will not notice)
 - types.h is included by ALL files. Never redefine any struct elsewhere.
 - If you need to change types.h, make sure it doesnt break both persons files.
 
 ---
 
 ## Current progress
-(vertify it because another agent can forget to modify the progress even if it is done)
-- [x] types.h â€” complete
-- [x] algeria_history.txt â€” filled with 18 personalities and 12 events
-- [x] linkedlist.h â€” prototypes ready, needs to be written to file
-- [x] All other .c and .h files â€” created but EMPTY
-- [x] linkedlist.c â€” complete (Section 2 done)
-- [ ] tree.h â€” not started
-- [ ] tree.c â€” not started
-- [ ] gui.c â€” not started
-- [ ] stack.h â€” not started (Person 2)
-- [ ] stack.c â€” not started (Person 2)
-- [ ] recursion.h â€” not started (Person 2)
-- [ ] recursion.c â€” not started (Person 2)
-- [ ] main.c â€” to be done last
+(verify it - another agent can forget to update this even after finishing work)
+- [x] types.h -- complete
+- [x] algeria_history.txt -- filled with 18 personalities and 12 events
+- [x] linkedlist.h -- complete (prototypes + CLI wrapper prototypes)
+- [x] linkedlist.c -- complete (all 19 functions + CLI wrappers)
+- [x] tree.h -- complete (prototypes + CLI wrapper prototypes)
+- [x] tree.c -- complete (all 16 BST functions + CLI wrappers)
+- [x] main.c -- complete (gradient bitmap logo, full menus for all 4 sections)
+- [ ] gui.c -- empty, not started
+- [ ] stack.h -- Person 2
+- [ ] stack.c -- Person 2
+- [ ] recursion.h -- Person 2
+- [ ] recursion.c -- Person 2
+
+### Known issues
+- src/algeria_history.txt is a duplicate of data/algeria_history.txt, likely an accident
+- addEvents returns TList* but casts TEvent* -- forced by the brief, works fine
+- deletepersonality uses hardcoded temp filename temp_algeria.txt
 
 ---
 
 ## Person 1 task order (do not change this order)
 
-1. types.h          âœ…
-2. linkedlist.h     (write prototypes to file)
-3. linkedlist.c     starting with getPersonality() and getDatePersonality()
-                    since everything else depends on data being loaded
-4. tree.h
-5. tree.c           starting with fillTree() and toTree()
+1. types.h          [DONE]
+2. linkedlist.h     [DONE]
+3. linkedlist.c     [DONE]
+4. tree.h           [DONE]
+5. tree.c           [DONE]
 6. gui.c            pick one library: GTK+ / ncurses / Raylib / SDL
-7. main.c           last â€” loads file on startup, launches GUI, handles exit
+7. main.c           [DONE]
 
 ---
 
@@ -141,7 +144,7 @@ IMPORTANT:
 - We use TEvent separately from TList even though the brief doesnt define it
 - DoB and DoD in structs are char arrays, parse them into date struct when
   doing date comparisons (sortPersonality, similarPersonality, etc.)
-- The brief was likely AI-generated by the professor â€” some function descriptions
+- The brief was likely AI-generated by the professor -- some function descriptions
   are contradictory or nonsensical (isPalindromeWord says "overlap" instead of
   palindrome check, longestSubyear is not a real CS term, etc.)
   Use your judgment when a description makes no sense, implement what is logical.
@@ -152,11 +155,11 @@ IMPORTANT:
 
 ## Brief reference (section mapping)
 
-- Section 2 â†’ linkedlist.c (Person 1)
-- Section 3 â†’ stack.c      (Person 2)
-- Section 4 â†’ tree.c       (Person 1)
-- Section 5 â†’ recursion.c  (Person 2)
-- Section 6 â†’ gui.c        (Person 1)
+- Section 2 -> linkedlist.c (Person 1)
+- Section 3 -> stack.c      (Person 2)
+- Section 4 -> tree.c       (Person 1)
+- Section 5 -> recursion.c  (Person 2)
+- Section 6 -> gui.c        (Person 1)
 
 ---
 
@@ -164,7 +167,7 @@ IMPORTANT:
 
 You are working FOR KARIM (Person 1) only.
 
-### Person 2 files â€” DO NOT TOUCH EVER
+### Person 2 files - DO NOT TOUCH EVER
 The following files belong to Person 2. Never read, edit, create, or reference
 them in your work. Pretend they do not exist:
 
@@ -175,7 +178,6 @@ them in your work. Pretend they do not exist:
 
 ### Your scope
 You only work on these files:
-
 
 - include/types.h
 - include/linkedlist.h
@@ -188,35 +190,35 @@ You only work on these files:
 - data/algeria_history.txt
 - forai.md (this file)
 
-### EXPLICIT PERMISSION RULE â€” MANDATORY
-DO NOT touch a file without my explicit permission.
+### EXPLICIT PERMISSION RULE - MANDATORY
+DO NOT touch a file without Karim's explicit permission.
 
 ### Coding Rules
-- We leave a placeholder (empty function definition) ONLY when we skip a function in the designated task order.
-- Every function will have a second version that demonstrates that the function works, named exactly as `_functionName` (e.g., `_getPersonality`).
-- In `main.c` (the CLI entry point), we will just call the `_functionName` versions.
+- C89 standard strictly -- all variables declared at the top of their function
+- We leave a placeholder (empty function definition) ONLY when we skip a function
+- Every function has a CLI wrapper named _functionName (e.g. _getPersonality)
+- main.c calls only the _functionName wrappers
 
-### Changelog rule â€” MANDATORY
+### Changelog rule - MANDATORY
 Every time you make ANY change to ANY file, you MUST document it at the bottom
 of this file under the ## Changelog section. No exceptions. No skipping.
 If you skip logging a change, the next agent will have no idea what happened.
 
 Format each entry as:
-[dd/mm/yyyy] [filename] â€” what you did and why
+[dd/mm/yyyy] [filename] - what you did and why
 
-If you are unsure of the date, write "unknown date".
 After finishing your work, always re-read the Changelog section to make sure
 everything you did is recorded before ending the session.
 
 ---
 
-## Project Brief (exact copy â€” agent has no access to the PDF)
+## Project Brief (exact copy - agent has no access to the PDF)
 
 Second semester Project: History of Algeria Database using Dynamic Data Structures
 Level: 1st Year
 Material: Algorithms and Dynamic Data Structures
 Academic Year: 2025/2026
-School: NSCS, PÃ´le scientifique et technologique Chahid Â« Abdelhafid IhaddadÃ¨ne Â», Ville de Sidi Abdallah
+School: NSCS, Pole scientifique et technologique Chahid Abdelhafid Ihaddadene, Ville de Sidi Abdallah
 
 ### 1. Introduction
 
@@ -319,7 +321,7 @@ NB:
 
 ## Changelog
 
-[25/04/2026] Full project setup by Claude (claude.ai) â€”
+[25/04/2026] Full project setup by Claude (claude.ai) --
   - Created full folder structure: data/, include/, src/, report/
   - Filled data/algeria_history.txt with 18 personalities and 12 events
   - Wrote include/types.h with all shared structs (date, TList, TEvent, TQueue, TStack, TTree)
@@ -328,35 +330,36 @@ NB:
   - Wrote forai.md (this file)
   - Added .gitignore to hide forai.md from git
 
-[25/04/2026] src/linkedlist.c, main.c, forai.md â€”
+[25/04/2026] src/linkedlist.c, main.c, forai.md --
   - Implemented getPersonality() to extract names and definitions of personalities into a linked list.
   - Removed comments from getPersonality() as requested.
   - Created a test main() in main.c to verify that getPersonality() successfully reads and parses algeria_history.txt.
 
-[25/04/2026] src/linkedlist.c, main.c, forai.md â€”
+[25/04/2026] src/linkedlist.c, main.c, forai.md --
   - Cleared main.c to revert it.
   - Moved the test main function into linkedlist.c instead.
   - Added strict rule to forai.md forbidding agents from modifying files without explicit permission.
 
-[25/04/2026] src/linkedlist.c, forai.md â€”
+[25/04/2026] src/linkedlist.c, forai.md --
   - Fixed memory leak and scanf buffer overflow vulnerability in _getPersonality().
 
-[25/04/2026] forai.md â€”
+[25/04/2026] forai.md --
   - Added coding rules regarding placeholders and the _functionName CLI wrappers.
 
-[25/04/2026] src/linkedlist.c, forai.md, task.md, walkthrough.md â€”
+[25/04/2026] src/linkedlist.c, forai.md --
   - Implemented the remaining 17 functions from Section 2 of the brief (sorting, merging, palindrome, queues).
   - Wrote CLI testing wrappers (_functionName) for all 17 functions.
   - Verified compilation with 0 errors or warnings.
 
-[25/04/2026] main.c, forai.md —
+[25/04/2026] main.c, forai.md --
   - Added AlgDB pixel-perfect bitmap rendering with dynamic RGB drop-shadows.
-  - C89 Standard: All variables must be declared strictly at the beginning of their respective functions. Do not declare variables mid-function or inside loops.
+  - C89 Standard enforced: all variables declared at the top of functions.
 
-[01/05/2026] src/linkedlist.c - Implemented similarPersonality, countPersonality, palindromeName, mergeNodes, merge2Nodes, addPersonality, addEvents, sName, ageP, toQueue.
-[01/05/2026] src/linkedlist.c - Stripped AI comments, leaving only string library explanations.
-[01/05/2026] src/linkedlist.c - Fixed C89 compiler errors: parenthesis, <ctype.h>, addEvents signature.
-[01/05/2026] main.c - Wrote full CLI integrating all 19 wrappers with Securi-C style.
-[01/05/2026] Makefile - Created C89 compliant Makefile.
-[01/05/2026] src/tree.c - Fixed C89 comment violation and unused param warning.
-[01/05/2026] include/linkedlist.h - Added wrapper declarations to fix implicit declaration warnings.
+[01/05/2026] src/linkedlist.c -- Implemented similarPersonality, countPersonality, palindromeName, mergeNodes, merge2Nodes, addPersonality, addEvents, sName, ageP, toQueue.
+[01/05/2026] src/linkedlist.c -- Stripped AI comments, leaving only string library explanations.
+[01/05/2026] src/linkedlist.c -- Fixed C89 compiler errors: parenthesis, ctype.h, addEvents signature.
+[01/05/2026] main.c -- Wrote full CLI integrating all 19 wrappers with gradient color style.
+[01/05/2026] Makefile -- Created C89 compliant Makefile.
+[01/05/2026] src/tree.c -- Implemented all 16 BST functions + CLI wrappers. Fixed C89 violations.
+[01/05/2026] include/linkedlist.h -- Added wrapper declarations to fix implicit declaration warnings.
+[01/05/2026] forai.md -- Updated current progress section (Claude via claude.ai).

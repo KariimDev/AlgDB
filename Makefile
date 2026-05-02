@@ -1,19 +1,19 @@
 CC     = gcc
 CFLAGS = -Wall -Wextra -std=c89 -Iinclude
 
-SRC    = src/linkedlist.c src/tree.c src/stack.c src/recursion.c main.c
-OBJ    = $(SRC:.c=.o)
-TARGET = algdb.exe
+SRC_CORE = src/linkedlist.c src/tree.c src/stack.c src/recursion.c
+SRC_CLI  = main.c
+SRC_GUI  = src/gui.c
 
-all: $(TARGET)
+all: cli.exe gui.exe
 
-$(TARGET): $(OBJ)
+cli.exe: $(SRC_CORE) $(SRC_CLI)
 	$(CC) $(CFLAGS) -o $@ $^
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+gui.exe: $(SRC_CORE) $(SRC_GUI)
+	set CHERE_INVOKING=1 && C:\msys64\usr\bin\bash.exe -lc "export PATH=/mingw64/bin:$$PATH; gcc -w -g src/gui.c src/linkedlist.c src/tree.c src/stack.c src/recursion.c -o gui.exe `pkg-config --cflags --libs gtk+-3.0`"
 
 clean:
-	del /Q $(subst /,\,$(OBJ)) $(TARGET) 2>nul || true
+	del /Q cli.exe gui.exe 2>nul || true
 
 .PHONY: all clean
