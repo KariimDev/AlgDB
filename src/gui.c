@@ -31,12 +31,8 @@ typedef struct {
     GtkWidget *list_box;
 } UiPack;
 
-/* =========================================================
- * LOAD PACK
- * Passed to the Open File callback so it can refresh
- * both the personalities list and the events list.
- * ========================================================= */
 
+ //this  will be given to the open file callback
 typedef struct {
     GtkWidget *personalities_list;
     GtkWidget *events_list;
@@ -753,6 +749,162 @@ static GtkWidget *build_personalities_tab(GtkWidget **out_list_box) {
 
 
 /* =========================================================
+ * VISUAL BST RENDERER
+ * ========================================================= */
+
+static int get_tree_depth(TTree *node) {
+    if (!node) return 0;
+    int l = get_tree_depth(node->left);
+    int r = get_tree_depth(node->right);
+    return (l > r ? l : r) + 1;
+}
+
+static void draw_bst_node(cairo_t *cr, TTree *node, double x, double y, double dx, double dy) {
+    if (!node) return;
+
+    if (node->left) {
+        cairo_set_source_rgb(cr, 0.4, 0.4, 0.4);
+        cairo_set_line_width(cr, 1.5);
+        cairo_move_to(cr, x, y);
+        cairo_line_to(cr, x - dx, y + dy);
+        cairo_stroke(cr);
+        draw_bst_node(cr, node->left, x - dx, y + dy, dx / 2.0, dy);
+    }
+    if (node->right) {
+        cairo_set_source_rgb(cr, 0.4, 0.4, 0.4);
+        cairo_set_line_width(cr, 1.5);
+        cairo_move_to(cr, x, y);
+        cairo_line_to(cr, x + dx, y + dy);
+        cairo_stroke(cr);
+        draw_bst_node(cr, node->right, x + dx, y + dy, dx / 2.0, dy);
+    }
+
+    cairo_new_path(cr);
+    cairo_arc(cr, x, y, 15, 0, 2 * 3.14159);
+    cairo_set_source_rgb(cr, 1, 1, 1);
+    cairo_fill_preserve(cr);
+    
+    cairo_set_source_rgb(cr, 0, 0.38, 0.2); /* Algerian Green */
+    cairo_set_line_width(cr, 2);
+    cairo_stroke(cr);
+
+    cairo_set_source_rgb(cr, 0, 0, 0);
+    char short_name[14];
+    strncpy(short_name, node->name, 12);
+    short_name[12] = '\0';
+    if (strlen(node->name) > 12) strcat(short_name, ".");
+    
+    cairo_text_extents_t extents;
+    cairo_text_extents(cr, short_name, &extents);
+    
+    /* Draw text slightly below the circle */
+    cairo_move_to(cr, x - (extents.width/2.0 + extents.x_bearing), y + 15 + 8 + extents.height);
+    cairo_show_text(cr, short_name);
+}
+
+static gboolean on_draw_bst_canvas(GtkWidget *widget, cairo_t *cr, gpointer data) {
+    int width = gtk_widget_get_allocated_width(widget);
+    
+    /* Clear background */
+    cairo_set_source_rgb(cr, 0.95, 0.95, 0.95);
+    cairo_paint(cr);
+    
+    if (!g_bst) return FALSE;
+    
+    cairo_set_source_rgb(cr, 0.4, 0.4, 0.4);
+    cairo_set_line_width(cr, 1.5);
+    
+    double start_x = width / 2.0;
+    double start_y = 40.0;
+    int depth = get_tree_depth(g_bst);
+    
+    double dx = (depth > 1) ? (width / 4.0) : 0;
+    double dy = 70.0;
+    
+    draw_bst_node(cr, g_bst, start_x, start_y, dx, dy);
+    return FALSE;
+}
+
+static void on_bst_canvas_map(GtkWidget *widget, gpointer data) {
+    GtkAdjustment *hadj = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(data));
+    double upper = gtk_adjustment_get_upper(hadj);
+    double page = gtk_adjustment_get_page_size(hadj);
+    gtk_adjustment_set_value(hadj, (upper - page) / 2.0);
+}
+
+static double drag_start_x = 0;
+static double drag_start_y = 0;
+
+static gboolean on_canvas_button_press(GtkWidget *widget, GdkEventButton *event, gpointer data) {
+    if (event->button == 1) {
+        drag_start_x = event->x_root;
+        drag_start_y = event->y_root;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static gboolean on_canvas_motion(GtkWidget *widget, GdkEventMotion *event, gpointer data) {
+    if (event->state & GDK_BUTTON1_MASK) {
+        GtkWidget *scroll = GTK_WIDGET(data);
+        GtkAdjustment *hadj = gtk_scrolled_window_get_hadjustment(GTK_SCROLLED_WINDOW(scroll));
+        GtkAdjustment *vadj = gtk_scrolled_window_get_vadjustment(GTK_SCROLLED_WINDOW(scroll));
+        
+        double dx = event->x_root - drag_start_x;
+        double dy = event->y_root - drag_start_y;
+        
+        gtk_adjustment_set_value(hadj, gtk_adjustment_get_value(hadj) - dx);
+        gtk_adjustment_set_value(vadj, gtk_adjustment_get_value(vadj) - dy);
+        
+        drag_start_x = event->x_root;
+        drag_start_y = event->y_root;
+        return TRUE;
+    }
+    return FALSE;
+}
+
+static void on_bst_draw_clicked(GtkWidget *btn, gpointer data) {
+    if (!g_bst) {
+        show_popup("No BST loaded to draw!");
+        return;
+    }
+    
+    GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+    gtk_window_set_title(GTK_WINDOW(window), "Visual BST Renderer");
+    gtk_window_set_default_size(GTK_WINDOW(window), 1000, 700);
+    
+    GtkWidget *scroll = gtk_scrolled_window_new(NULL, NULL);
+    gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll), 
+                                   GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
+                                   
+    GtkWidget *drawing_area = gtk_drawing_area_new();
+    
+    int depth = get_tree_depth(g_bst);
+    int req_width = (1 << (depth - 1)) * 80; 
+    if (req_width > 4000) req_width = 4000;
+    if (req_width < 1000) req_width = 1000;
+    int req_height = depth * 80 + 80;
+    if (req_height < 700) req_height = 700;
+    
+    gtk_widget_set_size_request(drawing_area, req_width, req_height);
+    
+    gtk_widget_add_events(drawing_area, GDK_BUTTON_PRESS_MASK | GDK_POINTER_MOTION_MASK);
+    g_signal_connect(G_OBJECT(drawing_area), "draw", G_CALLBACK(on_draw_bst_canvas), NULL);
+    g_signal_connect(G_OBJECT(drawing_area), "button-press-event", G_CALLBACK(on_canvas_button_press), scroll);
+    g_signal_connect(G_OBJECT(drawing_area), "motion-notify-event", G_CALLBACK(on_canvas_motion), scroll);
+    
+    GtkWidget *viewport = gtk_viewport_new(NULL, NULL);
+    gtk_container_add(GTK_CONTAINER(viewport), drawing_area);
+    gtk_container_add(GTK_CONTAINER(scroll), viewport);
+    
+    g_signal_connect(G_OBJECT(viewport), "map", G_CALLBACK(on_bst_canvas_map), scroll);
+
+    gtk_container_add(GTK_CONTAINER(window), scroll);
+    gtk_widget_show_all(window);
+}
+
+
+/* =========================================================
  * BUILD TAB: BST
  * Left  : search entry + large scrollable output text area
  * Right : Traversals frame + BST Operations frame
@@ -840,6 +992,15 @@ static GtkWidget *build_bst_tab(void) {
     }
     gtk_box_pack_start(GTK_BOX(right_box),
                        make_frame("BST Operations", frame_box), FALSE, FALSE, 0);
+
+    /* Visuals frame */
+    GtkWidget *b4 = gtk_button_new_with_label("Draw BST Visually");
+    g_signal_connect(b4, "clicked", G_CALLBACK(on_bst_draw_clicked), NULL);
+    GtkWidget *visuals_box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 4);
+    gtk_container_set_border_width(GTK_CONTAINER(visuals_box), 6);
+    gtk_box_pack_start(GTK_BOX(visuals_box), b4, FALSE, FALSE, 0);
+    gtk_box_pack_start(GTK_BOX(right_box),
+                       make_frame("Visuals", visuals_box), FALSE, FALSE, 0);
 
     paned = gtk_paned_new(GTK_ORIENTATION_HORIZONTAL);
     gtk_paned_pack1(GTK_PANED(paned), left_box,  TRUE,  TRUE);
