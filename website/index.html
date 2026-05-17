@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgDB — Algeria Historical Database</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+<body>
+
+    <!-- ═══════════════════ UPLOAD GATE ═══════════════════ -->
+    <div class="upload-gate" id="upload-gate">
+        <div class="upload-gate-bg"></div>
+        <div class="upload-box">
+            <div class="upload-logo">AlgDB</div>
+            <h2>Load Your Database</h2>
+            <p>Upload your <code>algeria_history.txt</code> file to begin exploring.</p>
+            <label class="upload-drop" id="upload-drop">
+                <input type="file" id="file-input" accept=".txt" hidden>
+                <div class="upload-icon">📂</div>
+                <div class="upload-text">Click to choose a file</div>
+                <div class="upload-sub">or drag and drop your .txt file here</div>
+            </label>
+            <div class="upload-error" id="upload-error"></div>
+            <button class="btn-primary" id="btn-upload" disabled>Load Database →</button>
+            <div class="upload-progress" id="upload-progress" style="display:none">
+                <div class="spinner"></div> Uploading &amp; parsing with C…
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ MAIN APP ═══════════════════ -->
+    <div class="app" id="app" style="display:none">
+
+        <!-- NAV -->
+        <header class="nav">
+            <div class="logo">AlgDB</div>
+            <div class="nav-links">
+                <a href="#personalities" class="nav-link active" data-tab="personalities">Tree Explorer</a>
+                <a href="#events" class="nav-link" data-tab="events">Events Timeline</a>
+            </div>
+            <button class="btn-outline-sm" id="btn-change-file">⇄ Change File</button>
+        </header>
+
+        <!-- HERO STRIP -->
+        <div class="hero-strip">
+            <div class="hero-strip-bg"></div>
+            <div class="hero-strip-content">
+                <div class="hero-badge">Algeria Historical Database</div>
+                <h1>Explore Algeria's <span class="gradient-text">Greatest Figures</span></h1>
+                <p class="hero-sub">Powered by a native C backend — all data parsed in real-time at machine speed.</p>
+                <div class="hero-stats">
+                    <div class="stat"><span class="stat-num" id="stat-count">—</span><span class="stat-label">Personalities</span></div>
+                    <div class="stat-divider"></div>
+                    <div class="stat"><span class="stat-num" id="stat-bst-height">—</span><span class="stat-label">BST Depth</span></div>
+                    <div class="stat-divider"></div>
+                    <div class="stat"><span class="stat-num" id="stat-file">—</span><span class="stat-label">File Loaded</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PERSONALITIES TREE SECTION -->
+        <section class="section dark-section" id="section-personalities">
+            <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; text-align:left;">
+                <div>
+                    <h2>Visual Database</h2>
+                    <p>Live binary search tree. Click nodes for details. Drag to pan, scroll to zoom.</p>
+                </div>
+                <div>
+                    <button class="btn-primary" style="width:auto; padding:12px 24px;" id="btn-show-add">+ Add Personality</button>
+                </div>
+            </div>
+
+            <div class="bst-container">
+                <div class="bst-overlay-tools">
+                    <div class="search-bar">
+                        <span class="search-icon">⌕</span>
+                        <input type="text" id="search-input" placeholder="Find personality and fly to node…"/>
+                    </div>
+                    <div class="bst-controls">
+                        <button class="btn-secondary" id="btn-center">⊙ Center Root</button>
+                    </div>
+                </div>
+
+                <div class="bst-canvas-wrap" id="tree-container">
+                    <!-- D3 SVG will go here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- EVENTS SECTION -->
+        <section class="section" id="section-events" style="display:none">
+            <div class="section-header">
+                <h2>Historical Timeline</h2>
+                <p>Major events ordered chronologically</p>
+            </div>
+            
+            <div class="timeline-wrap" id="timeline-wrap">
+                <div class="loading-spinner"><div class="spinner"></div><span>Building timeline…</span></div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p>AlgDB — Powered by a C backend &amp; Node.js bridge</p>
+        </footer>
+    </div>
+
+    <!-- ═══════════════════ ADD MODAL ═══════════════════ -->
+    <div class="modal-overlay" id="modal-add-overlay" style="display:none">
+        <div class="modal">
+            <button class="modal-close" id="modal-add-close">✕</button>
+            <h2 class="modal-name">Add Personality</h2>
+            <p style="color:var(--text-muted); margin-bottom: 24px;">Insert a new figure into the database. The tree will dynamically update.</p>
+            
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="add-name" class="form-input" placeholder="e.g. Larbi Ben M'hidi">
+            </div>
+            <div style="display:flex; gap:16px;">
+                <div class="form-group" style="flex:1;">
+                    <label>Date of Birth</label>
+                    <input type="text" id="add-dob" class="form-input" placeholder="e.g. 1923">
+                </div>
+                <div class="form-group" style="flex:1;">
+                    <label>Date of Death (Optional)</label>
+                    <input type="text" id="add-dod" class="form-input" placeholder="e.g. 04/03/1957">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Definition</label>
+                <textarea id="add-def" class="form-input" rows="4" placeholder="Description..."></textarea>
+            </div>
+            <div class="upload-error" id="add-error"></div>
+            <button class="btn-primary" id="btn-submit-add">Insert into Tree</button>
+        </div>
+    </div>
+
+    <!-- ═══════════════════ DETAILS MODAL ═══════════════════ -->
+    <div class="modal-overlay" id="modal-overlay" style="display:none">
+        <div class="modal">
+            <button class="modal-close" id="modal-close">✕</button>
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <div>
+                    <div class="modal-badge" id="modal-badge"></div>
+                    <h2 class="modal-name" id="modal-name"></h2>
+                </div>
+                <button class="btn-danger" id="btn-delete-node">🗑 Delete Node</button>
+            </div>
+            <div class="modal-dates" id="modal-dates"></div>
+            <div class="modal-divider"></div>
+            <p class="modal-def" id="modal-def"></p>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

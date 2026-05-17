@@ -83,6 +83,7 @@ void menuTree();
 void menuStack();
 void menuRecursion();
 void showAbout();
+void gui();
 
 int main() {
     int choice;
@@ -95,6 +96,8 @@ int main() {
         printf(C_NUM "3." C_RST " Binary Search Trees\n");
         printf(C_NUM "4." C_RST " Recursion\n");
         printf(C_NUM "5." C_RST " About\n");
+        printf(C_NUM "6." C_RST " Launch GUI\n");
+
         printf(C_NUM "0." C_RST " Exit\n");
         printf("-------------------------------------------\n");
         printf("Enter your choice: ");
@@ -109,6 +112,7 @@ int main() {
             case 3: menuTree(); break;
             case 4: menuRecursion(); break;
             case 5: showAbout(); break;
+            case 6: gui(); break;  
             case 0:
                 printf("Exiting AlgDB. Goodbye.\n");
                 exit(0);
@@ -305,4 +309,11 @@ void menuRecursion() {
         }
         if (choice != 0) pauseConsole();
     } while (choice != 0);
+}
+void gui(){
+#ifdef _WIN32
+    system("start \"\" gui.exe");
+#else
+    system("./gui.exe &");
+#endif
 }

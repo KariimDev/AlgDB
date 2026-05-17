@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include "../include/stack.h"
 #include <stdio.h>
 
-TStack* push(struct TStack* stk, const char* name, const char* definition, const char* dob, const char* dod){
+TStack* push(TStack* stk, const char* name, const char* definition, const char* dob, const char* dod){
     TStack* newNode;
     newNode = (TStack*)malloc(sizeof(TStack));
     
@@ -41,7 +42,7 @@ TStack* push(struct TStack* stk, const char* name, const char* definition, const
     return newNode;
 }
 
-struct TStack* pop(struct TStack* stk, struct TStack* poppedData){
+TStack* pop(TStack* stk, TStack* poppedData){
     TStack* temp;
 
     if (stk == NULL) {
@@ -62,15 +63,15 @@ struct TStack* pop(struct TStack* stk, struct TStack* poppedData){
     return stk;
 }
 
-struct TStack* peek(struct TStack* stk) {
+TStack* peek(TStack* stk) {
     return stk;
 }
 
-bool isEmpty(struct TStack* stk) {
+bool isEmpty(TStack* stk) {
     return stk == NULL;
 }
 
-TStack* toStack(struct TList *merged) {
+TStack* toStack(TList *merged) {
     TStack* stk;
     TList* curr;
     
@@ -85,20 +86,39 @@ TStack* toStack(struct TList *merged) {
     return stk;
 }
 
-struct TStack* getInfoPersonality(struct TStack *stk, char *name){
-    TStack* curr;
-    curr = stk;
-    
-    while (curr != NULL) {
-        if (strcmp(curr->name, name) == 0) {
-            return curr; 
+TStack* getInfoPersonality(TStack *stk, char *name){
+    TStack* tempStack;
+    TStack temp;
+    TStack* found;
+
+    tempStack = NULL;
+    found = NULL;
+
+    while (!isEmpty(stk)) {
+        stk = pop(stk, &temp);
+        if (strcmp(temp.name, name) == 0) {
+            found = (TStack*)malloc(sizeof(TStack));
+            if (found != NULL) {
+                strcpy(found->name, temp.name);
+                strcpy(found->definition, temp.definition);
+                strcpy(found->DoB, temp.DoB);
+                strcpy(found->DoD, temp.DoD);
+                found->next = NULL;
+            }
         }
-        curr = curr->next;
+        tempStack = push(tempStack, temp.name, temp.definition, temp.DoB, temp.DoD);
+        if (found != NULL) break;
     }
-    return NULL;
+    
+    while (!isEmpty(tempStack)) {
+        tempStack = pop(tempStack, &temp);
+        stk = push(stk, temp.name, temp.definition, temp.DoB, temp.DoD);
+    }
+    
+    return found;
 }
 
-void stackSwapData(struct TStack* a, struct TStack* b) {
+void stackSwapData(TStack* a, TStack* b) {
     char tempName[MAX_NAME], tempDef[MAX_DEF], tempDoB[MAX_DATE], tempDoD[MAX_DATE];
     
     strcpy(tempName, a->name); 
@@ -117,36 +137,25 @@ void stackSwapData(struct TStack* a, struct TStack* b) {
     strcpy(b->DoD, tempDoD);
 }
 
-struct TStack* sortNameStack(struct TStack *s){
+TStack* sortNameStack(TStack *s){
     TStack* sorted;
-    TStack* curr;
-    TStack* i;
-    TStack* j;
+    TStack temp;
 
     sorted = NULL;
-    curr = s;
 
     if (s == NULL) return NULL;
     
-    while (curr != NULL) {
-        sorted = push(sorted, curr->name, curr->definition, curr->DoB, curr->DoD);
-        curr = curr->next;
+    while (!isEmpty(s)) {
+        s = pop(s, &temp);
+        sorted = addNameStack(sorted, temp.name, temp.definition, temp.DoB, temp.DoD);
     }
     
-    for (i = sorted; i != NULL; i = i->next) {
-        for (j = i->next; j != NULL; j = j->next) {
-            /* strcmp(i->name, j->name) > 0 means i->name is greater than j->name, so we swap them */
-            if (strcmp(i->name, j->name) > 0) {
-                stackSwapData(i, j);
-            }
-        }
-    }
     return sorted;
 }
 
-struct TStack* deleteName(struct TStack *stk, char *name) {
-    struct TStack temp;
-    struct TStack* tempStack;
+TStack* deleteName(TStack *stk, char *name) {
+    TStack temp;
+    TStack* tempStack;
 
     tempStack = NULL;
     
@@ -167,86 +176,109 @@ struct TStack* deleteName(struct TStack *stk, char *name) {
 }
 
 TStack* updateStack(TStack *stk, char *name, char *def, char *DoB, char *DoD){
-    TStack* curr;
-    curr = stk;
-    
-    while (curr != NULL) {
-        if (strcmp(curr->name, name) == 0) {
-            if(def != NULL){
-                strcpy(curr->definition, def);
-            }
-            if(DoB != NULL){
-                strcpy(curr->DoB, DoB);
-            }
-            if(DoD != NULL){
-                strcpy(curr->DoD, DoD);
-            }
-            break; 
+    TStack* tempStack;
+    TStack temp;
+
+    tempStack = NULL;
+
+    while (!isEmpty(stk)) {
+        stk = pop(stk, &temp);
+        if (strcmp(temp.name, name) == 0) {
+            if (def != NULL) strcpy(temp.definition, def);
+            if (DoB != NULL) strcpy(temp.DoB, DoB);
+            if (DoD != NULL) strcpy(temp.DoD, DoD);
         }
-        curr = curr->next;
+        tempStack = push(tempStack, temp.name, temp.definition, temp.DoB, temp.DoD);
     }
+
+    while (!isEmpty(tempStack)) {
+        tempStack = pop(tempStack, &temp);
+        stk = push(stk, temp.name, temp.definition, temp.DoB, temp.DoD);
+    }
+
     return stk;
+}
+
+/* Helper function to enqueue an element into a TQueue */
+void enqueue(TQueue* queue, const char* name, const char* definition, const char* dob, const char* dod) {
+    TList* newNode = (TList*)malloc(sizeof(TList));
+    if (newNode == NULL) return;
+    
+    if (name != NULL) strcpy(newNode->name, name); else newNode->name[0] = '\0';
+    if (definition != NULL) strcpy(newNode->definition, definition); else newNode->definition[0] = '\0';
+    if (dob != NULL) strcpy(newNode->DoB, dob); else newNode->DoB[0] = '\0';
+    if (dod != NULL) strcpy(newNode->DoD, dod); else newNode->DoD[0] = '\0';
+    
+    newNode->next = NULL;
+    newNode->prev = NULL;
+
+    if (queue->rear == NULL) {
+        queue->front = newNode;
+        queue->rear = newNode;
+    } else {
+        queue->rear->next = newNode;
+        newNode->prev = queue->rear;
+        queue->rear = newNode;
+    }
 }
 
 /* In the stack use only pop and push and in the queue use only enqueue and dequeue */
 TQueue* stackToQueue(TStack *stk){
     TQueue* queue;
-    TStack* curr;
-    TList* newNode;
+    /* the difference here between TStack* and TStack is that TStack* is a pointer to a stack and TStack is a stack */
+    /* we use TStack to store the data of the stack and the pointer TStack* to point to the stack */
+    TStack* tempStack;
+    TStack temp;
 
     queue = (TQueue*)malloc(sizeof(TQueue));
     if (queue == NULL) {
-        return NULL; 
+        return NULL;
     }
     queue->front = NULL;
     queue->rear = NULL;
 
-    curr = stk;
-    while (curr != NULL) {
-        newNode = (TList*)malloc(sizeof(TList));
-        if (newNode == NULL) {
-            return NULL; 
-        }
-        strcpy(newNode->name, curr->name);
-        strcpy(newNode->definition, curr->definition);
-        strcpy(newNode->DoB, curr->DoB);
-        strcpy(newNode->DoD, curr->DoD);
-        newNode->next = NULL;
-        newNode->prev = NULL;
-
-        if (queue->rear == NULL) {
-            queue->front = newNode;
-            queue->rear = newNode;
-        } else {
-            queue->rear->next = newNode;
-            newNode->prev = queue->rear;
-            queue->rear = newNode;
-        }
-        curr = curr->next;
+    tempStack = NULL;
+    /* here we reverse the stack in order to enqueue the elements in the same order */
+    while (!isEmpty(stk)) {
+        stk = pop(stk, &temp);
+        tempStack = push(tempStack, temp.name, temp.definition, temp.DoB, temp.DoD);
     }
+
+    while (!isEmpty(tempStack)) {
+        tempStack = pop(tempStack, &temp);
+        enqueue(queue, temp.name, temp.definition, temp.DoB, temp.DoD);
+    }
+
     return queue;
 }
 
-/* In the stack use only pop and push and in the queue use only enqueue and dequeue */
+
 TList* stackToList(TStack *stk){
     TList* head;
     TList* tail;
-    TStack* curr;
+    TStack* tempStack;
+    TStack temp;
     TList* newNode;
 
     head = NULL;
     tail = NULL;
-    curr = stk;
+    tempStack = NULL;
 
-    while (curr != NULL) {
+    while (!isEmpty(stk)) {
+        stk = pop(stk, &temp);
+        tempStack = push(tempStack, temp.name, temp.definition, temp.DoB, temp.DoD);
+    }
+
+    while (!isEmpty(tempStack)) {
+        tempStack = pop(tempStack, &temp);
         newNode = (TList*)malloc(sizeof(TList));
         if (newNode == NULL) {
-            return NULL; 
+            return NULL;
         }
-        strcpy(newNode->name, curr->name);
-        strcpy(newNode->definition, curr->definition);
-        strcpy(newNode->DoB, curr->DoB);
-        strcpy(newNode->DoD, curr->DoD);
+        strcpy(newNode->name, temp.name);
+        strcpy(newNode->definition, temp.definition);
+        strcpy(newNode->DoB, temp.DoB);
+        strcpy(newNode->DoD, temp.DoD);
         newNode->next = NULL;
         newNode->prev = NULL;
 
@@ -258,7 +290,6 @@ TList* stackToList(TStack *stk){
             newNode->prev = tail;
             tail = newNode;
         }
-        curr = curr->next;
     }
     return head;
 }
@@ -266,7 +297,7 @@ TList* stackToList(TStack *stk){
 /* this function adds a personality name with definition and dates into a sorted stack. */
 TStack* addNameStack(TStack *stk, char *name, char *definition, char *DoB, char *DoD){
     TStack* tempStack;
-    struct TStack temp;
+    TStack temp;
 
     tempStack = NULL;
 
@@ -290,6 +321,8 @@ TStack* addNameStack(TStack *stk, char *name, char *definition, char *DoB, char 
     return stk;
 }
 
+/* the logic of this function is an variable that checks if the current character is a word or not so it can count the words in the definition when 
+ it finds a space it sets the word to false and when it finds a non-space character it sets the word to true and increments the count */
 int countword(char* str) {
     int count;
     bool Word;
@@ -311,9 +344,9 @@ int countword(char* str) {
 
 /* this function sorts the personality names according to the number of words in their definition */
 TStack* definitionStack(TStack *stk){
-    struct TStack* tempStack;
-    struct TStack currentData;
-    struct TStack topTempData;
+    TStack* tempStack;
+    TStack currentData;
+    TStack topTempData;
     int currentWords;
 
     tempStack = NULL;
@@ -344,10 +377,10 @@ TStack* definitionStack(TStack *stk){
 }
 
 /* Sorts the events into short (< 10 words) or long (>= 10 words) */
-struct TStack* pronunciationStack(struct TStack *stk) {
-    struct TStack* shortStack;
-    struct TStack* longStack;
-    struct TStack temp;
+TStack* pronunciationStack(TStack *stk) {
+    TStack* shortStack;
+    TStack* longStack;
+    TStack temp;
 
     shortStack = NULL;
     longStack = NULL;
@@ -374,14 +407,14 @@ struct TStack* pronunciationStack(struct TStack *stk) {
 }
 
 char* getSmallest(TStack *stk){
-    /* use only pop and push to find the smallest name in the stack */
-    struct TStack temp;
+    TStack temp;
     char* smallest;
 
     smallest = NULL;
 
     while (!isEmpty(stk)) {
         stk = pop(stk, &temp);
+        /* strcmp(temp.name, smallest) < 0 means if temp.name is smaller than smallest */
         if (smallest == NULL || strcmp(temp.name, smallest) < 0) {
             smallest = temp.name;   
         }
@@ -401,8 +434,8 @@ bool isPersonalityKilled(char *definition) {
     return false;
 }
 
-void insertAtend(struct TStack **stk, struct TStack data) {
-    struct TStack temp;
+void insertAtend(TStack **stk, TStack data) {
+    TStack temp;
 
     if (isEmpty(*stk)) {
         *stk = push(*stk, data.name, data.definition, data.DoB, data.DoD);
@@ -414,8 +447,8 @@ void insertAtend(struct TStack **stk, struct TStack data) {
     *stk = push(*stk, temp.name, temp.definition, temp.DoB, temp.DoD); 
 }       
 
-struct TStack* recRevStack(struct TStack *stk) {
-    struct TStack temp;
+TStack* recRevStack(TStack *stk) {
+    TStack temp;
 
     if (!isEmpty(stk)) {
         stk = pop(stk, &temp);         
@@ -425,7 +458,7 @@ struct TStack* recRevStack(struct TStack *stk) {
     return stk;
 }
 
-/* Helper to build a stack from file for wrappers */
+/*helper to build a stack from file for wrappers */
 TStack* buildStackFromFile(char *filePath) {
     FILE *file;
     TList *s;
@@ -435,16 +468,14 @@ TStack* buildStackFromFile(char *filePath) {
 
     file = fopen(filePath, "r");
     if (file == NULL) {
-        printf("Error opening file.\n");
+        printf("error opening file.\n");
         return NULL;
     }
-
     s = getPersonality(file);
     rewind(file);
     a = getDatePersonality(file);
     merged = mergeNodes(s, a);
     stk = toStack(merged);
-    
     fclose(file);
     return stk;
 }
@@ -454,6 +485,7 @@ void _toStack() {
     TStack *stk;
 
     printf("Enter file path: ");
+    /* %99s is used to prevent buffer overflow */
     scanf("%99s", filePath);
 
     stk = buildStackFromFile(filePath);

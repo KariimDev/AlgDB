@@ -195,12 +195,13 @@ int recursionExtractYear(char *date) {
     return atoi(date);
 }
 
+
 void scanOverlap(FILE *f, char *date1, char *date2) {
     char line[1024];
     char *open;
     char *close;
     char dateBuf[40];
-    int len;
+    int len;  
     int startYear;
     int endYear;
     int y1;

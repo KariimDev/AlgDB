@@ -55,19 +55,29 @@ static void call_postorder(TTree *t) { traversalBSTpostOrder(t); }
 
 static char *capture_stdout(void (*func)(TTree *), TTree *arg) {
     char  tmp_path[600];
+    //fd file descriptors
     int old_stdout_fd;
     int tmp_fd;
     char *buffer;
     long  file_size;
     FILE *f;
 
+    // get the path of the file that we will store the output in
     snprintf(tmp_path, sizeof(tmp_path), "cap_tmp.txt");
 
+    //clear the memory to print in the gui instead of the console
     fflush(stdout);
+
+    //duplicate the stdout fd to the tmp_fd
     old_stdout_fd = dup(fileno(stdout));
+
+    //open the file in write mode and truncate it
     tmp_fd = open(tmp_path, O_RDWR | O_CREAT | O_TRUNC, 0666);
+
     if (tmp_fd < 0) return strdup("(capture failed)");
     
+
+    //this is where we redirect the output of the function to the file
     dup2(tmp_fd, fileno(stdout));
     
     func(arg);
@@ -104,11 +114,13 @@ static char *capture_stdout(void (*func)(TTree *), TTree *arg) {
 
 static void show_popup(const char *message) {
     GtkWidget *dialog = gtk_message_dialog_new(
+        //modal means that the user can't interact with any other window until the dialog is closed
         NULL, GTK_DIALOG_MODAL,
         GTK_MESSAGE_INFO, GTK_BUTTONS_OK,
         "%s", message
     );
     gtk_dialog_run(GTK_DIALOG(dialog));
+    //destroy will be called after we exit the run function that mean after clicking ok 
     gtk_widget_destroy(dialog);
 }
 
@@ -224,6 +236,8 @@ static GtkWidget *make_frame(const char *title, GtkWidget *child) {
  * ========================================================= */
 
 static void on_open_file_clicked(GtkWidget *button, gpointer data) {
+    //loadpack is my type that contains the two list boxes pointers 
+    
     LoadPack  *lpack = (LoadPack *)data;
     GtkWidget *dialog;
     gint       result;

@@ -2,3 +2,5 @@
 *.o
 *.py
 test_data.txt
+.gitignore
+node_modules

@@ -44,7 +44,7 @@ TList* getPersonality(FILE *f) {
                 strncpy(newNode->name, line, name_length);
                 newNode->name[name_length] = '\0'; 
             }
-
+            
             if (head == NULL) {
                 head = newNode;
                 tail = newNode;
@@ -408,6 +408,7 @@ int extractYear(char *dateStr) {
     lastSlash = strrchr(dateStr, '/'); /* strrchr finds the LAST '/' to isolate the year in dd/mm/yyyy */
     if (lastSlash != NULL) {
         return atoi(lastSlash + 1);
+        /*we add 1 because we want to get the year not the slash*/
     }
     return atoi(dateStr);
 }
@@ -952,6 +953,7 @@ void _merge2Nodes() {
         printf("Last->next points back to: %s\n", m->prev->next->name);
     }
 }
+
 TList* addPersonality(TList *s, TList *a, char *name, char *DoB, char *DoD) {
     TList *newNodeS;
     TList *newNodeA;
@@ -1038,6 +1040,8 @@ TList* addEvents(TEvent *b, char *namEvente, char *date) {
     }
 
     return (TList *)b;
+
+
 }
 
 void _addEvents() {
@@ -1085,6 +1089,7 @@ TQueue* makeQueue(TList *list) {
     return q;
 }
 
+
 TQueue* sName(TList *s) {
     TList *cur;
     TList *cur2;
@@ -1121,6 +1126,8 @@ void _sName() {
     }
 }
 
+
+
 TQueue* ageP(TList *a) {
     return makeQueue(sortPersonality(a));
 }
@@ -1148,6 +1155,7 @@ void _ageP() {
 TQueue* toQueue(TList *merged) {
     return makeQueue(merged);
 }
+
 
 void _toQueue() {
     char filePath[100];

@@ -8,9 +8,9 @@
 TTree* insertTree(TTree *root, TTree *newNode) {
     if (root == NULL) return newNode;
     
-    if (strcmp(newNode->name, root->name) < 0) {
+    if (strcasecmp(newNode->name, root->name) < 0) {
         root->left = insertTree(root->left, newNode);
-    } else if (strcmp(newNode->name, root->name) > 0) {
+    } else if (strcasecmp(newNode->name, root->name) > 0) {
         root->right = insertTree(root->right, newNode);
     } else {
         free(newNode);
@@ -47,7 +47,8 @@ TTree* fillTree(FILE *f) {
     TList *s;
     TList *a;
     TList *merged;
-    TStack *stk;
+    TList *curr;
+    TTree *root = NULL;
 
     if (f == NULL) return NULL;
 
@@ -59,9 +60,21 @@ TTree* fillTree(FILE *f) {
     
     merged = mergeNodes(s, a);
     
-    stk = toStack(merged);
+    curr = merged;
+    while (curr != NULL) {
+        TTree *newNode = (TTree *)malloc(sizeof(TTree));
+        strcpy(newNode->name, curr->name);
+        strcpy(newNode->definition, curr->definition);
+        strcpy(newNode->DoB, curr->DoB);
+        strcpy(newNode->DoD, curr->DoD);
+        newNode->left = NULL;
+        newNode->right = NULL;
+        
+        root = insertTree(root, newNode);
+        curr = curr->next;
+    }
     
-    return toTree(stk);
+    return root;
 }
 
 void _fillTree() {
